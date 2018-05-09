@@ -1,1 +1,0 @@
-# spatialdatawithR_intro

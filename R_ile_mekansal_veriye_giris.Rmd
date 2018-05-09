@@ -1,0 +1,43 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# sf paketi ile mekansal veri analizi
+
+R'da mekansal veriler ile çalışmak için *sf* paketi kullanacağız. Göreceli olarak dahayeni bir paket olan *sf*, *sp* paketinin yerini aldı.  
+Uluslararası bir konsorsiyum olan Open Geospatial (OGC) standartlarını desteklediği için 
+yeni projelerin `sf` paketi kullanılarak yapılması tavsiye ediliyor. 
+
+**Hatırlatma : klasik R veri tipleri**
+
+R'ın sunduğu temel veri tipleri aşağıda verilmiştir. 
+
+Veri tiplerinin yanında gösterilen kodları çalıştırarak sonuçları analiz edelim.
+
+![](https://raw.githubusercontent.com/PranaGeo/spatialdatawithR_intro/master/images/R_data_types.png)
+
+
+**Hatırlatma :**
+
+`data.frame` nesnesi verileri tablo formatında tutar:
+
+![](https://www.tutorialspoint.com/python_pandas/images/structure_table.jpg)
+
+# sf nesnesi 
+`sf` nesnesi klasik `data.frame` nesnesinden kalıtım alır.
+
+Bir `sf` nesnesinin `sfc` sınıfından bir sütunu olması gerekir. Bu sütun, geometri verilerini tutar. `sfc` nesnesi herbir 
+`data.frame` satırı için bir `sfg` nesnesi tutan bir `list` nesnesidir. 
+
+![](https://github.com/r-spatial/sf/raw/master/vignettes/sf_xfig.png)
+
+## data.frame nesnesi ile sf yaratmak
+*meuse* adlı data.frame, *x* ve *y* sütunlarında 
+
+```{r}
+library(sf)
+data('meuse', package = "sp")
+class(meuse)
+head(meuse)
+```
