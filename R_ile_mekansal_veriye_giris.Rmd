@@ -33,7 +33,7 @@ Bir `sf` nesnesinin `sfc` sınıfından bir sütunu olması gerekir. Bu sütun, 
 ![](https://github.com/r-spatial/sf/raw/master/vignettes/sf_xfig.png)
 
 ## data.frame nesnesi ile sf yaratmak
-*meuse* adlı data.frame, *x* ve *y* sütunlarında 
+*meuse* adlı data.frame, *x* ve *y* sütunlarında mekansal koordinatlar, diğer satırlarında ise çeşitli çevresel veriler içerir.
 
 ```{r}
 library(sf)
@@ -41,3 +41,99 @@ data('meuse', package = "sp")
 class(meuse)
 head(meuse)
 ```
+
+*meuse* data.frame nesnesini *sf*'e çevirmek için  *st_as_sf()* fonksiyonunu kullanacağız.
+```{r}
+ms <- st_as_sf(
+  meuse, 
+  coords = c('x', 'y'),
+  crs = "+init=epsg:28992"
+)
+class(ms)
+head(ms)
+```
+
+Yukarıdaki koda baktığımızda gözümüze çarpan şeyler:
+- `ms` adlı değişken'in sınıfı : "sf" ve bu "data.frame" sınıfından kalıt alıyor
+- nedir bu EPSG 28992? 
+
+EPSG kodları hakkında daha fazla bilgiyi [spatialreference.org](http://spatialreference.org/ref/epsg/amersfoort-rd-new/)'da bulabiliriz.
+
+
+## Basit sf Geometri Türleri
+
+![](https://raw.githubusercontent.com/PranaGeo/spatialdatawithR_intro/master/images/geometry_types.png)
+
+## R değişkenleri ile sf nesnesi yaratımı
+
+```{r}
+library(sf)
+#data.frame nesnesi oluştur
+d = data.frame(a = 1:2)
+#her bir data.frame satırı için sfg nesnesi oluştur
+pt1 = st_point(c(0,1))
+pt2 = st_point(c(1,1))
+class(pt1)
+
+#sfc nesnesi oluştur ve bunu "geom" adlı sütuna taşı
+d$geom = st_sfc(pt1, pt2)
+#sf nesnesi yarat
+my_sf = st_as_sf(d)
+class(my_sf)
+```
+
+## sf nesnelerinin görsellenmesi
+
+*sf* paketi ile gelen *plot* metodu ile enteraktif olmayan ama hafızaya yük bindirmeyen haritalar çizebiliriz :
+
+```{r}
+library(sf)
+demo(nc, ask = FALSE, echo = FALSE)
+plot(st_geometry(nc))
+```
+
+leaflet paketi ile harita yapımı:
+
+*leaflet* paketi ile  `d3` (Javascript) tabanlı enteraktif harita yapımı çok kolay. Bu haritaları yaparken hafızada ne kadar yer tuttuklarına bakmak yararlı olur. Çok fazla veri çizildiği taktirde tarayıcıyı ve hatta makinayi kitleyebilir.
+
+```{r}
+library(leaflet)
+m = leaflet() %>% 
+   addTiles() %>% 
+   setView(36, 39, zoom=6)
+m  # a map with the default OSM tile layerers(lng=174.768, lat=-36.752, popup="The birthplace of R")
+```
+
+# Enteraktif harita kontrolleri
+Haritada görsellenen katmanları *leaflet* paketi ile gelen kontrolleri kullanarak kapatıp açmak mümkün.
+
+```{r}
+outline <- quakes[chull(quakes$long, quakes$lat),]
+
+map <- leaflet(quakes) %>%
+  # Base groups
+  addTiles(group = "OSM (default)") %>%
+  addProviderTiles(providers$Stamen.Toner, group = "Toner") %>%
+  addProviderTiles(providers$Stamen.TonerLite, group = "Toner Lite") %>%
+  # Overlay groups
+  addCircles(~long, ~lat, ~10^mag/5, stroke = F, group = "Quakes") %>%
+  addPolygons(data = outline, lng = ~long, lat = ~lat,
+    fill = F, weight = 2, color = "#FFFFCC", group = "Outline") %>%
+  # Layers control
+  addLayersControl(
+    baseGroups = c("OSM (default)", "Toner", "Toner Lite"),
+    overlayGroups = c("Quakes", "Outline"),
+    options = layersControlOptions(collapsed = FALSE)
+  )
+map
+```
+
+
+Bir *sf* nesnesi ile doğrudan enteraktif harita çizmek için *mapview* paketini kullanabiliriz :
+
+```{r}
+library(mapview)
+demo(nc, ask = FALSE, echo = FALSE)
+mapview(nc["BIR74"], col.regions = sf.colors(10),map.types = mapviewGetOption("basemaps")[3])
+```
+
