@@ -1,6 +1,8 @@
 ---
 title: "R Notebook"
-output: html_notebook
+output:
+  html_document:
+    df_print: paged
 ---
 
 # sf paketi ile mekansal veri analizi
@@ -22,7 +24,7 @@ Veri tiplerinin yanında gösterilen kodları çalıştırarak sonuçları anali
 
 `data.frame` nesnesi verileri tablo formatında tutar:
 
-![](https://www.tutorialspoint.com/python_pandas/images/structure_table.jpg)
+![](https://raw.githubusercontent.com/PranaGeo/spatialdatawithR_intro/master/images/structure_table.jpg)
 
 # sf nesnesi 
 `sf` nesnesi klasik `data.frame` nesnesinden kalıtım alır.
@@ -59,10 +61,16 @@ Yukarıdaki koda baktığımızda gözümüze çarpan şeyler:
 
 EPSG kodları hakkında daha fazla bilgiyi [spatialreference.org](http://spatialreference.org/ref/epsg/amersfoort-rd-new/)'da bulabiliriz.
 
-
 ## Basit sf Geometri Türleri
 
 ![](https://raw.githubusercontent.com/PranaGeo/spatialdatawithR_intro/master/images/geometry_types.png)
+
+## Harita projeksiyon sistemleri
+3 boyutlu bir nesne olan gezegenimizin yüzeyini 2 boyutlu kağıt ve ekranlarda göstermek için harita projeksiyon sistemleri kullanmaktayız.
+
+![](https://raw.githubusercontent.com/PranaGeo/spatialdatawithR_intro/master/images/projection_families.png)
+
+Doğru projeksiyon sistemi seçimi için mekanın ve yapılacak analiz türünün çok iyi bilnmesi gerekir.
 
 ## R değişkenleri ile sf nesnesi yaratımı
 
@@ -84,7 +92,8 @@ class(my_sf)
 
 ## sf nesnelerinin görsellenmesi
 
-*sf* paketi ile gelen *plot* metodu ile enteraktif olmayan ama hafızaya yük bindirmeyen haritalar çizebiliriz :
+*sf* paketi ile gelen *plot* metodu ile enteraktif olmayan ama hafızaya yük bindirmeyen haritalar çizebiliriz.  Aşağıdaki kod ile sadece *geometry* sütunu ile 
+harita altlığı çiziyoruz. **Attribute data** bilgisi görsellemiyoruz.
 
 ```{r}
 library(sf)
@@ -92,15 +101,17 @@ demo(nc, ask = FALSE, echo = FALSE)
 plot(st_geometry(nc))
 ```
 
-leaflet paketi ile harita yapımı:
+## leaflet paketi ile harita yapımı:
 
-*leaflet* paketi ile  `d3` (Javascript) tabanlı enteraktif harita yapımı çok kolay. Bu haritaları yaparken hafızada ne kadar yer tuttuklarına bakmak yararlı olur. Çok fazla veri çizildiği taktirde tarayıcıyı ve hatta makinayi kitleyebilir.
+ *leaflet* paketi ile  `d3` (Javascript) tabanlı enteraktif harita yapımı çok kolay. Bu haritaları yaparken hafızada ne kadar yer tuttuklarına bakmak yararlı olur. 
+Çok fazla veri çizildiği taktirde tarayıcıyı ve hatta makinayi kilitleyebilir. Daha fazla bilgi icin [leaflet web sitesi](https://rstudio.github.io/leafletweb site). 
 
 ```{r}
 library(leaflet)
 m = leaflet() %>% 
    addTiles() %>% 
-   setView(36, 39, zoom=6)
+   setView(36, 39, zoom=6) %>% 
+   addMarkers(27.43054, 37.034407, popup = "Bodrum'da artık bir IT dünyası var!", label = "Bodrum")
 m  # a map with the default OSM tile layerers(lng=174.768, lat=-36.752, popup="The birthplace of R")
 ```
 
@@ -133,7 +144,32 @@ Bir *sf* nesnesi ile doğrudan enteraktif harita çizmek için *mapview* paketin
 
 ```{r}
 library(mapview)
+library(sf)
 demo(nc, ask = FALSE, echo = FALSE)
 mapview(nc["BIR74"], col.regions = sf.colors(10),map.types = mapviewGetOption("basemaps")[3])
+```
+
+*tmap* paketini kullanarak *sf* nesnesi ile doğrudan harita çizebiliriz
+```{r}
+library(sf)
+library(tmap)
+demo(nc, ask = FALSE, echo = FALSE)
+qtm(nc)
+```
+
+```{r}
+tmap_mode("view")
+## tmap mode set to interactive viewing
+# if (Sys.getenv("USER") != "CRAN")
+tm_shape(nc) + tm_fill("BIR74", palette = sf.colors(5))
+```
+
+## World map data
+*spData* paketi çeşitli mekansal veritabanları içermekte. Mesela dünya haritasını değişik boyutları ile çizelim. 
+```{r}
+library(sf)
+world <- st_read(system.file("shapes/world.gpkg", package="spData"))
+names(world)
+plot(world)
 ```
 
