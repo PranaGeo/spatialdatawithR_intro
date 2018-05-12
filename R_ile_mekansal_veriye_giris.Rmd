@@ -173,6 +173,14 @@ names(world)
 plot(world)
 ```
 
+# Referanslar 
+- [sf paketi](https://cran.r-project.org/web/packages/sf/)
+- [sp paketi](https://cran.r-project.org/web/packages/sp/) (eski teknoloji)
+- [Geocomputation with R
+](https://geocompr.robinlovelace.net/) (online kitap)
+- [r-spatial.org](https://www.r-spatial.org)
+- [Rspatial.org](http://www.rspatial.org/)
+- Cran Task View : [Analysis of Spatial Data](https://cran.r-project.org/web/views/Spatial.html)
 
 # Daha fazla bilgi için
 
