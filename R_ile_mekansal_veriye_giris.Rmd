@@ -104,7 +104,7 @@ plot(st_geometry(nc))
 ## leaflet paketi ile harita yapımı:
 
  *leaflet* paketi ile  `d3` (Javascript) tabanlı enteraktif harita yapımı çok kolay. Bu haritaları yaparken hafızada ne kadar yer tuttuklarına bakmak yararlı olur. 
-Çok fazla veri çizildiği taktirde tarayıcıyı ve hatta makinayi kilitleyebilir. Daha fazla bilgi icin [leaflet web sitesi](https://rstudio.github.io/leafletweb site). 
+Çok fazla veri çizildiği taktirde tarayıcıyı ve hatta makinayi kilitleyebilir. Daha fazla bilgi icin [leaflet web sitesi](https://rstudio.github.io/leafletweb). 
 
 ```{r}
 library(leaflet)
@@ -173,3 +173,12 @@ names(world)
 plot(world)
 ```
 
+
+# Daha fazla bilgi için
+
+**Servet Ahmet Çizmeli**, PranaGEO Ltd., Bodrum
+
+**ahmet@pranageo.com**
+
+# Bize yardım edin
+**VisualR** kendine yeni bir isim arıyor... Platformumuzun isim annesi olmak ister misiniz?
